@@ -1,4 +1,4 @@
-package com.github.cryptoMania;
+package com.github.cryptomania;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
