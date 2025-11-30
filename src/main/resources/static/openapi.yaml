@@ -1,0 +1,364 @@
+openapi: 3.0.3
+info:
+  title: CryptoMania API
+  version: 1.0.0
+  description: OpenAPI specification for the CryptoMania portfolio API
+servers:
+  - url: http://localhost:8080
+
+tags:
+  - name: Cryptos
+    description: Operations related to cryptocurrencies in the portfolio
+  - name: Portfolio
+    description: Portfolio-level operations
+
+paths:
+  /cryptos:
+    post:
+      tags:
+        - Cryptos
+      summary: Add new cryptocurrency to portfolio
+      description: Create a new cryptocurrency entry in the portfolio. Returns the created resource and a Location header.
+      operationId: addCrypto
+      requestBody:
+        $ref: '#/components/requestBodies/NewCrypto'
+      responses:
+        '201':
+          $ref: '#/components/responses/CryptoCreated'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    get:
+      tags:
+        - Cryptos
+      summary: Retrieve all cryptocurrencies in the portfolio
+      description: Returns all cryptocurrencies. Use the `sort` query parameter to order results by a supported field.
+      operationId: getAllCryptos
+      parameters:
+        - $ref: '#/components/parameters/sort'
+      responses:
+        '200':
+          $ref: '#/components/responses/CryptoList'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /cryptos/{id}:
+    parameters:
+      - $ref: '#/components/parameters/id'
+
+    get:
+      tags:
+        - Cryptos
+      summary: Get details of a specific cryptocurrency
+      description: Retrieve a cryptocurrency by its unique identifier.
+      operationId: getCryptoById
+      responses:
+        '200':
+          $ref: '#/components/responses/CryptoSingle'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    put:
+      tags:
+        - Cryptos
+      summary: Update an existing cryptocurrency
+      description: Replace data of an existing cryptocurrency. If the resource does not exist, returns 404.
+      operationId: updateCrypto
+      requestBody:
+        $ref: '#/components/requestBodies/NewCrypto'
+      responses:
+        '200':
+          $ref: '#/components/responses/CryptoSingle'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /portfolio-value:
+    get:
+      tags:
+        - Portfolio
+      summary: Calculate total portfolio value
+      description: Computes the total value of the portfolio as the sum of (price * quantity) for all cryptocurrencies.
+      operationId: getPortfolioValue
+      responses:
+        '200':
+          description: Total portfolio value
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PortfolioValue'
+              examples:
+                portfolioValueExample:
+                  $ref: '#/components/examples/PortfolioValueExample'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+components:
+  parameters:
+    sort:
+      name: sort
+      in: query
+      description: |
+        Sort results. Use `price`, `name`, or `quantity`.
+        Example: /cryptos?sort=price
+      required: false
+      schema:
+        type: string
+        enum: [price, name, quantity]
+
+    id:
+      name: id
+      in: path
+      description: Unique identifier of the cryptocurrency
+      required: true
+      schema:
+        type: integer
+
+  requestBodies:
+    NewCrypto:
+      description: New or updated cryptocurrency payload
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/NewCrypto'
+          examples:
+            newCryptoExample:
+              $ref: '#/components/examples/NewCryptoExample'
+
+  headers:
+    Location:
+      description: URI of the created resource
+      schema:
+        type: string
+        format: uri
+
+  responses:
+    CryptoCreated:
+      description: Cryptocurrency created
+      headers:
+        Location:
+          $ref: '#/components/headers/Location'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Crypto'
+          examples:
+            cryptoExample:
+              $ref: '#/components/examples/CryptoExample'
+
+    CryptoSingle:
+      description: Cryptocurrency details
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Crypto'
+          examples:
+            cryptoExample:
+              $ref: '#/components/examples/CryptoExample'
+
+    CryptoList:
+      description: List of cryptocurrencies
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Crypto'
+          examples:
+            cryptoListExample:
+              $ref: '#/components/examples/CryptoListExample'
+
+    BadRequest:
+      description: Invalid input
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ValidationProblem'
+          examples:
+            validationProblemExample:
+              $ref: '#/components/examples/ValidationProblemExample'
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+          examples:
+            notFoundProblemExample:
+              $ref: '#/components/examples/ProblemExample'
+
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+          examples:
+            internalProblemExample:
+              $ref: '#/components/examples/ProblemExample'
+
+  examples:
+    CryptoExample:
+      summary: Example cryptocurrency (Bitcoin)
+      value:
+        id: 1
+        name: Bitcoin
+        symbol: BTC
+        price: 56000.0
+        quantity: 0.25
+
+    CryptoExample2:
+      summary: Example cryptocurrency (Ethereum)
+      value:
+        id: 2
+        name: Ethereum
+        symbol: ETH
+        price: 3500.0
+        quantity: 2.0
+
+    CryptoListExample:
+      summary: Example list of cryptocurrencies
+      value:
+        - id: 1
+          name: Bitcoin
+          symbol: BTC
+          price: 56000.0
+          quantity: 0.25
+        - id: 2
+          name: Ethereum
+          symbol: ETH
+          price: 3500.0
+          quantity: 2.0
+
+    NewCryptoExample:
+      summary: Example payload to create/update a cryptocurrency
+      value:
+        name: Cardano
+        symbol: ADA
+        price: 1.20
+        quantity: 1000.0
+
+    PortfolioValueExample:
+      summary: Example portfolio value
+      value:
+        totalValue: 63500.0
+
+    ProblemExample:
+      summary: Generic problem details example
+      value:
+        type: https://example.com/probs/internal-error
+        title: Internal server error
+        status: 500
+        detail: Unexpected error while processing the request
+        instance: /cryptos/123
+
+    ValidationProblemExample:
+      summary: Validation problem details example
+      value:
+        type: https://example.com/probs/validation-error
+        title: Validation failed
+        status: 400
+        detail: One or more fields are invalid
+        instance: /cryptos
+        errors:
+          - field: price
+            message: Price must be non-negative
+          - field: quantity
+            message: Quantity must be non-negative
+
+  schemas:
+    Crypto:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique identifier of the cryptocurrency
+          readOnly: true
+        name:
+          type: string
+          description: Name of the cryptocurrency (e.g., Bitcoin)
+        symbol:
+          type: string
+          description: Cryptocurrency symbol (e.g., BTC)
+        price:
+          type: number
+          format: double
+          description: Current price in dollars
+          minimum: 0
+        quantity:
+          type: number
+          format: double
+          description: Number of units in the portfolio
+          minimum: 0
+      required: [id, name, symbol, price, quantity]
+
+    NewCrypto:
+      type: object
+      properties:
+        name:
+          type: string
+        symbol:
+          type: string
+        price:
+          type: number
+          format: double
+          minimum: 0
+        quantity:
+          type: number
+          format: double
+          minimum: 0
+      required: [name, symbol, price, quantity]
+
+    PortfolioValue:
+      type: object
+      properties:
+        totalValue:
+          type: number
+          format: double
+          description: Sum of (price * quantity) of all cryptocurrencies
+      required: [totalValue]
+
+    Problem:
+      type: object
+      description: RFC 7807 Problem Details
+      properties:
+        type:
+          type: string
+          format: uri
+          description: A URI reference that identifies the problem type
+        title:
+          type: string
+        status:
+          type: integer
+        detail:
+          type: string
+        instance:
+          type: string
+          description: A URI reference that identifies the specific occurrence of the problem
+      required: [title, status]
+
+    ValidationProblem:
+      allOf:
+        - $ref: '#/components/schemas/Problem'
+        - type: object
+          properties:
+            errors:
+              type: array
+              items:
+                type: object
+                properties:
+                  field:
+                    type: string
+                  message:
+                    type: string
+                required: [field, message]
+          required: [errors]
