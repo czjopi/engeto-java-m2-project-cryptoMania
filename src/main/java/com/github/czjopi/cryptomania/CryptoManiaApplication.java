@@ -1,4 +1,4 @@
-package com.github.cryptomania;
+package com.github.czjopi.cryptomania;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
