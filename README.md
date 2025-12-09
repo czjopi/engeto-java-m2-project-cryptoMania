@@ -33,6 +33,20 @@ Projekt ma v zavislotech `spring-boot-devtools` pro automaticky reload aplikace 
 
 DevTools se automaticky neaktivuje v produkcnim prostredi.
 
+## Jak zapnout/vypnout debug logy
+
+Pro zapnuti debug logu pridej do `src/main/resources/application.properties`:
+
+```properties
+logging.level.root=DEBUG
+```
+
+Pro vypnuti debug logu v produkci nastav na INFO nebo WARN:
+
+```properties
+logging.level.root=INFO
+```
+
 ---
 
 Pro testovani endpointu aplikace je mozne vyuzit Swagger-UI nebo Bruno kolekci v `src/main/resources/bruno/CryptoMania API`.
