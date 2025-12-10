@@ -1,0 +1,21 @@
+meta {
+  name: Add TRON to portfolio
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/cryptos
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "id": 2,
+    "name": "Tron",
+    "symbol": "TRX",
+    "price": "3.5",
+    "quantity": "10435.4"
+  }
+}

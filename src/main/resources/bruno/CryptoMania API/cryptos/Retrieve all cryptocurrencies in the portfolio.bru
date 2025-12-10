@@ -1,0 +1,17 @@
+meta {
+  name: Retrieve all cryptocurrencies in the portfolio
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/cryptos
+  body: none
+  auth: inherit
+}
+
+params:query {
+  ~sort: name
+  ~sort: price
+  ~sort: quantity
+}

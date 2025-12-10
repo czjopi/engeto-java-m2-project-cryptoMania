@@ -1,0 +1,21 @@
+meta {
+  name: Add Bitcoin to portfolio
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/cryptos
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "id": 1,
+    "name": "Bitcoin",
+    "symbol": "BTC",
+    "price": "100000.0",
+    "quantity": "10.0"
+  }
+}

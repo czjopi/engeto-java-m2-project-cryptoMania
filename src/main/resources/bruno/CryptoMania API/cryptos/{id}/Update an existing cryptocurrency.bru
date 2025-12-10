@@ -1,0 +1,25 @@
+meta {
+  name: Update an existing cryptocurrency
+  type: http
+  seq: 2
+}
+
+put {
+  url: {{baseUrl}}/cryptos/:id
+  body: json
+  auth: inherit
+}
+
+params:path {
+  id: 1
+}
+
+body:json {
+  {
+    "id": 10,
+    "name": "Ethereum",
+    "symbol": "ETH",
+    "price": "1040",
+    "quantity": "20.8"
+  }
+}

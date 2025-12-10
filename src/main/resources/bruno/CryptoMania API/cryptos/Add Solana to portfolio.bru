@@ -1,0 +1,21 @@
+meta {
+  name: Add Solana to portfolio
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/cryptos
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "id": 3,
+    "name": "Solana",
+    "symbol": "SOL",
+    "price": "180.63",
+    "quantity": "205.1"
+  }
+}
