@@ -107,4 +107,23 @@ public class CryptoService {
             return null;
         }
     }
+
+    /**
+     * Deletes a Crypto from the portfolio by id.
+     * 
+     * @param id unique identifier of the Crypto to delete
+     * @return true if deletion was successful, false if Crypto was not found
+     */
+    public boolean deleteCrypto(int id) {
+        Crypto cryptoToDelete = getCryptoById(id);
+        if (cryptoToDelete == null) {
+            log.warn("Crypto with id {} not found for deletion.", id);
+            return false;
+        }
+        if (cryptoPortfolio.remove(cryptoToDelete)) {
+            log.info("Deleted crypto with id: {}", id);
+            return true;
+        }
+        return false;
+    }
 }
